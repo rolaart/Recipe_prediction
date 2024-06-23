@@ -5,6 +5,9 @@ from datetime import datetime, timedelta
 # Глобална променлива за време на последна заявка за скъпи/специални рецепти
 last_special_request_time = None
 
+# Списък за съхраняване на обратната връзка
+feedback = []
+
 def load_model():
     with open('model.pkl', 'rb') as f:
         model = pickle.load(f)
@@ -61,3 +64,20 @@ def get_drink_recommendation(avg_temp):
         return "a cold drink"
     else:
         return "a hot drink"
+
+def submit_feedback(recipe_name, rating):
+    global feedback
+    feedback.append({'recipe_name': recipe_name, 'rating': rating})
+
+def adjust_recommendations(recipes):
+    global feedback
+    feedback_df = pd.DataFrame(feedback)
+    avg_ratings = feedback_df.groupby('recipe_name')['rating'].mean().to_dict()
+    
+    for recipe in recipes:
+        if recipe['name'] in avg_ratings:
+            recipe['adjusted_score'] = avg_ratings[recipe['name']]
+        else:
+            recipe['adjusted_score'] = 0  # или друга стойност по подразбиране
+
+    return sorted(recipes, key=lambda x: x['adjusted_score'], reverse=True)
