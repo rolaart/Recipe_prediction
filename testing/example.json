@@ -8,7 +8,8 @@
     {
       "name": "Recipe 2",
       "last_cooked_date": "2023-06-15",
-      "season": "summer"
+      "season": "summer",
+      "special": true
     },
     {
       "name": "Recipe 3",
@@ -17,8 +18,10 @@
     },
     {
       "name": "Recipe 4",
-      "last_cooked_date": "2024-04-12"
+      "last_cooked_date": "2024-04-12",
+      "expensive": true
     }
   ],
-  "avg_temp": 25
+  "avg_temp": 25,
+  "include_special": true
 }
