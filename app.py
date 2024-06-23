@@ -4,22 +4,18 @@ import traceback
 
 app = Flask(__name__)
 
-# Зареждане на модела при стартиране на приложението
 model = load_model()
 
 @app.route('/predict', methods=['POST'])
 def make_prediction():
     try:
         data = request.json
-        if not data:
-            return jsonify({'error': 'No data provided'}), 400
+        if not data or 'recipes' not in data or 'avg_temp' not in data:
+            return jsonify({'error': 'No data, "recipes" or "avg_temp" parameter provided'}), 400
         
-        # Проверка за наличието на необходимите параметри
-        if 'input' not in data:
-            return jsonify({'error': 'Missing "input" parameter'}), 400
-        
-        input_data = data['input']
-        prediction = predict(model, input_data)
+        recipes = data['recipes']
+        avg_temp = data['avg_temp']
+        prediction = predict(model, recipes, avg_temp)
         return jsonify({'prediction': prediction})
     
     except Exception as e:
