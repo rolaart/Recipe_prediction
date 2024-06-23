@@ -53,3 +53,11 @@ curl -X POST http://localhost:5000/add_recipe -H "Content-Type: application/json
   "special": false
 }'
 ```
+
+Add rating bash run:
+```
+curl -X POST http://localhost:5000/submit_feedback -H "Content-Type: application/json" -d '{
+  "recipe_name": "Recipe 1",
+  "rating": 4
+}'
+```
