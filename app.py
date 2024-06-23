@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from model import load_model, predict, last_special_request_time
+from model import load_model, predict, last_special_request_time, submit_feedback, adjust_recommendations
 import traceback
 from datetime import datetime
 
@@ -19,6 +19,10 @@ def make_prediction():
         avg_temp = data['avg_temp']
         include_special = data.get('include_special', False)
         prediction = predict(model, recipes, avg_temp, include_special)
+        
+        # Адаптиране на препоръките въз основа на обратната връзка
+        prediction = adjust_recommendations(prediction)
+        
         return jsonify({'prediction': prediction})
     
     except Exception as e:
@@ -39,7 +43,6 @@ def add_recipe():
             if field not in data:
                 return jsonify({'error': f'Missing field: {field}'}), 400
 
-        # Optional fields can be: 'season', 'expensive', 'special'
         new_recipe = {
             'name': data['name'],
             'last_cooked_date': data['last_cooked_date'],
@@ -50,6 +53,21 @@ def add_recipe():
 
         recipes_db.append(new_recipe)
         return jsonify({'status': 'Recipe added successfully', 'recipe': new_recipe}), 201
+    
+    except Exception as e:
+        return jsonify({'error': str(e), 'trace': traceback.format_exc()}), 500
+
+@app.route('/submit_feedback', methods=['POST'])
+def submit_feedback_route():
+    try:
+        data = request.json
+        if not data or 'recipe_name' not in data or 'rating' not in data:
+            return jsonify({'error': 'No data, "recipe_name" or "rating" parameter provided'}), 400
+        
+        recipe_name = data['recipe_name']
+        rating = data['rating']
+        submit_feedback(recipe_name, rating)
+        return jsonify({'status': 'Feedback submitted successfully'}), 200
     
     except Exception as e:
         return jsonify({'error': str(e), 'trace': traceback.format_exc()}), 500
