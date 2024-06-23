@@ -26,7 +26,7 @@ def predict(model, recipes, avg_temp, include_special=False):
     # Филтриране на рецепти
     filtered_recipes = []
     for recipe in recipes:
-        if not include_special_recipes and ('expensive' in recipe or 'special' in recipe):
+        if not include_special_recipes and ('expensive' in recipe and recipe['expensive'] or 'special' in recipe and recipe['special']):
             continue
         
         last_cooked_date = datetime.strptime(recipe['last_cooked_date'], '%Y-%m-%d')
