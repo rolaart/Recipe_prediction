@@ -15,3 +15,14 @@ Special bash run:
 ```
 curl -X POST http://localhost:5000/request_special
 ```
+
+Add recipe bash run:
+```
+curl -X POST http://localhost:5000/add_recipe -H "Content-Type: application/json" -d '{
+  "name": "Recipe 5",
+  "last_cooked_date": "2024-06-01",
+  "season": "summer",
+  "expensive": true,
+  "special": false
+}'
+```
