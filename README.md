@@ -6,6 +6,7 @@ This is a Flask-based API for recommending recipes. The system can suggest recip
 
 - Docker
 - Docker Compose (optional)
+- pytest (for running tests)
 
 ## Building and Running the Docker Container
 
@@ -163,3 +164,30 @@ This is a Flask-based API for recommending recipes. The system can suggest recip
     }
     ```
 
+## Running Tests
+
+To run the tests for the API and model, follow these steps:
+
+1. Install `pytest` and `requests` if you haven't already:
+
+    ```bash
+    pip install pytest requests
+    ```
+
+2. Make sure your Docker container is running:
+
+    ```bash
+    docker run -p 5000:5000 recommendation-system
+    ```
+
+3. Run the tests:
+
+    ```bash
+    pytest test_app.py
+    pytest test_model.py
+    ```
+
+### Test Files
+
+**test_app.py**
+**test_model.py**
