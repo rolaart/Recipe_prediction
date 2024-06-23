@@ -6,6 +6,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 model = load_model()
+recipes_db = []
 
 @app.route('/predict', methods=['POST'])
 def make_prediction():
@@ -28,6 +29,30 @@ def request_special():
     global last_special_request_time
     last_special_request_time = datetime.now()
     return jsonify({'status': 'Special recipes will be included for the next 24 hours'}), 200
+
+@app.route('/add_recipe', methods=['POST'])
+def add_recipe():
+    try:
+        data = request.json
+        required_fields = ['name', 'last_cooked_date']
+        for field in required_fields:
+            if field not in data:
+                return jsonify({'error': f'Missing field: {field}'}), 400
+
+        # Optional fields can be: 'season', 'expensive', 'special'
+        new_recipe = {
+            'name': data['name'],
+            'last_cooked_date': data['last_cooked_date'],
+            'season': data.get('season', ''),
+            'expensive': data.get('expensive', False),
+            'special': data.get('special', False)
+        }
+
+        recipes_db.append(new_recipe)
+        return jsonify({'status': 'Recipe added successfully', 'recipe': new_recipe}), 201
+    
+    except Exception as e:
+        return jsonify({'error': str(e), 'trace': traceback.format_exc()}), 500
 
 @app.route('/health', methods=['GET'])
 def health_check():
